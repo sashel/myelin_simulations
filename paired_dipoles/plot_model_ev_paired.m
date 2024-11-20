@@ -8,23 +8,24 @@ if ~isfolder([data_dir '/figures'])
     mkdir([data_dir '/figures'])
 end
 
-scaling_label = {'100-100%', '133-75%', '75-133%', '110-91%','91-110%','105-95%','95-105%'};
+scaling_label = {'1-1','10-0.1','0.1-10','5-0.2', '0.2-5', '3-0.33', '0.33-3'};
 source_recon_alg = {'IID','EBB','MSP'}; % can be 'IID' (Minimum Norm Estimate), 'EBB' (Empirical Bayesian Beamformer) or'MSP' (Multiple Sparse Priors)
 
 for a = source_recon_idx
     source_recon_alg_a = source_recon_alg{a};
     % collect free energy across SNRs s, repetitions j and scalings ii
     load([data_dir '/DLE_model_ev_' source_recon_alg_a '_sim_scale_' num2str(sim_i) '_1'],'F')
-    F_1 = F(:,:,[1,4:9]);
+    F_1 = F;
 
     load([data_dir '/DLE_model_ev_' source_recon_alg_a '_sim_scale_' num2str(sim_i) '_2'],'F')
-    F_2 = F(:,:,[1,4:9]);
+    F_2 = F;
 
     F = cat(2,F_1,F_2);
     SNR_Scale_F = squeeze(mean(F(1,:,2:7)- F(1,:,1),2));
 
     cm = colormap(brewermap(6, 'Paired'));
 
+    figure
     h = bar(SNR_Scale_F,'linewidth',1.6);
     h.BaseLine.LineWidth = 1.6;
     hold on
@@ -41,10 +42,10 @@ for a = source_recon_idx
     ylim([-4 6])
 
     box('off')
-    set(gca,'XTickLabel',{'133-75', '75-133', '110-91','91-110','105-95','95-105'})
+    set(gca,'XTickLabel',{'10-0.1','0.1-10','5-0.2', '0.2-5','3-0.33','0.33-3'})
     colormap(cmap)
     set(gcf,'color','w')
-    xlabel('Scaling in %')
+    xlabel('Scaling factors')
     ylabel('\Delta F')
     set(gca,'linewidth',1.6)
     a = get(gca,'XTickLabel');
